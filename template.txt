@@ -1,0 +1,431 @@
+<!---This would call the CFC in the APP.cfc:--->
+
+<cfset application.subscriptions = createobject("component", "cfcpsp.subscriptions").init()>
+
+
+
+
+
+
+<!---Above added in place of CFC for Code view.--->
+
+<cfinclude template="validAdmin.cfm">
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+   
+    <title>PlantSearch.com - Searchable Wholesale Plant & Supply Database</title>
+    
+    <link rel="stylesheet" type="text/css" href="/csspsp/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/csspsp/bootstrap-theme.css">
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel='stylesheet' type="text/css" href='https://fonts.googleapis.com/css?family=Open+Sans'>
+    
+    
+    <script src="/jspsp/jquery.js"></script>
+	<script src="/jspsp/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/jspsp/bootstrap.min.js"></script>
+    <script src="/jspsp/custom.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/csspsp/admindashboard.css">
+
+    <cfparam name="session.isLoggedIn" default="false">
+    
+   <script>
+        <cfwddx action="cfml2js" input="#session.isLoggedIn#" toplevelvariable="jsLoggedIn">
+        autolog = function() {
+            window.location.assign('Timeout.cfm');
+        }
+        setTimeout('autolog()',(1000*60*60*6)); //last number is # of hours
+	</script>
+
+</head>
+
+<body>
+
+<cfparam name="url.tg" default="0">
+
+<script>
+function toggleit(id) {
+		var txid = id+"txt";
+		var wrpid = id+"wrp";
+		
+		$("#"+wrpid).addClass("dashboardtitleHighlitedcolor");
+		
+		$("#"+id).slideToggle("slow", function() {
+			if ($("#"+id).is(':visible')) {
+				$("#"+wrpid).addClass("dashboardtitleHighlitedcolor");
+				$("#"+txid).text('-');
+				
+				}
+			else {
+				$("#"+wrpid).removeClass("dashboardtitleHighlitedcolor");
+				$("#"+txid).text('+');
+				
+				}
+			
+			});
+		}
+</script>
+
+
+<cfoutput>
+<div class="container-fluid">
+    <div class="row">
+    	<!---left dashboard nav start--->
+        <div class="col-xs-12 col-sm-3 col-md-2 leftnvbgc">
+        	<div class="row">
+            	<div class="col-xs-12 col-sm-12 col-md-12 lftnvtp">
+                	<span class="acttitl">Account</span><br>
+                    Dashboard
+                </div><!--- end col --->
+                <div class="col-xs-12 col-sm-12 col-md-12 text-center namewrp blbordr">
+                
+                <cfset contactname = lcase(session.siteuser.contactfirst) & ' ' & lcase(session.siteuser.contactlast)>
+                		<div class="myprofpic"><img src="/images/nsite/crcl.png" border="0"></div>
+                        <div class="usernamewrp">#contactname#</div>
+                        <div class="usrcompanyname"><i>#session.siteuser.companyname#</i></div>
+                        <cfif session.isadmin><!--- Only Display for admins--->
+							<cfif isDefined("session.working.exhibitor.CompanyBooth")>
+                                <div class="usrcompanyname compalias"><p><i>#lcase(session.working.exhibitor.companyname)#</i></p></div>
+                            </cfif>
+                        </cfif>
+                </div><!--- end col --->
+                
+                
+                <cfif isdefined('session.isadmin') and Session.isadmin eq 1>
+					<!---Admin Area Start--->
+					<div class="col-xs-12 col-sm-12 col-md-12 blbordr">
+						<div class="row dashboardtitlewrp" onClick="toggleit('dashsubscriber')" id="dashsubscriberwrp">
+							<div class="col-xs-10 col-sm-10 col-md-10 dashboardnavtitle">
+								SUBSCRIPTIONS
+							</div><!--- end col --->
+							<div class="col-xs-2 col-sm-2 col-md-2 text-right" id="dashsubscribertxt">
+								+
+							</div><!--- end col --->
+						</div><!--- end row --->
+						<div class="row" id="dashsubscriber" >
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<ul class="ulnavlst">
+									<li><a href="/admin/dashadmin_subscription_account.cfm?tabitem=a&tg=1">Add a New Subscriber</a></li>
+									<li><a href="/admin/dashadmin_subscription_account.cfm?tabitem=b&tg=1">Add a New Subscriber with Listings</a></li>
+									<li><a href="/admin/dashadmin_subscription_account.cfm?tabitem=c&tg=1">Add a New Subscriber from Buyer account</a></li>
+									<li><a href="/admin/dashadmin_subscription_editaddress.cfm?tabitem=a&tg=1">Edit Subscriber Address</a></li>
+									<li><a href="/admin/dashadmin_subscription_selectsubscription.cfm?tabitem=a&tg=1">Manage Subscription</a></li>
+									<li><a href="/admin/dashadmin_subscription_vendorsubscription.cfm?tabitem=a&tg=1">Manage Active Vendor Subscription</a></li>
+									<li><a href="/admin/dashadmin_subscription_plantype.cfm?tabitem=c&tg=1">View/Add/Edit Plan Types</a></li>
+									<li><a href="/admin/dashadmin_subscription_returnusers.cfm?tabitem=a&tg=1">Export Subscription List</a></li>
+								</ul>
+							</div>
+						</div>
+					</div><!--- end col --->
+					<!---Admin Area End--->
+                </cfif>
+                
+                
+                <!---Preferences--->
+                <div class="col-xs-12 col-sm-12 col-md-12 blbordr">
+                	<div class="row dashboardtitlewrp" onClick="toggleit('dashprefer')" id="dashpreferwrp">
+                        <div class="col-xs-10 col-sm-10 col-md-10 dashboardnavtitle">
+                        	PREFERENCES
+                        </div><!--- end col --->
+                        <div class="col-xs-2 col-sm-2 col-md-2 text-right" id="dashprefertxt">
+                        	+
+                        </div><!--- end col --->
+                    </div><!--- end row --->
+                    <div class="row" id="dashprefer">
+            			<div class="col-xs-12 col-sm-12 col-md-12">
+                        	<ul class="ulnavlst">
+                            	<li><a href="/admin/dashadmin_emailpref.cfm?tabitem=a&tg=1">Email Preferences</a></li>
+                                <li><a href="/admin/dashadmin_changepassword.cfm?tabitem=a&tg=1">Change Password</a></li>
+                                <li><a href="/logout.cfm">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div><!--- end col --->
+                <!---Preferences End--->
+                
+            </div><!--- end row --->
+        </div><!--- end col --->
+		<!---left dashboard nav End--->
+        
+       <!--- Start Main content well--->
+        <div class="col-xs-12 col-sm-9 col-md-10">
+        	<!---Top Logo Bar--->
+        	<div class="row logoshd">
+            	<div class="hidden-xs col-sm-3 col-md-3 text-center"><img src="/images/dashboardlogo_b.png" class="img-responsive"></div>
+                <div class="hidden-xs col-sm-3 col-md-3 text-center"><img src="/images/dashboardlogo_ps.png" class="img-responsive"></div>
+                <div class="hidden-xs col-sm-3 col-md-3 text-center"><img src="/images/dashboardlogo_pf.png" class="img-responsive"></div>
+                <div class="hidden-xs col-sm-3 col-md-3 text-center"><img src="/images/dashboardlogo_psl.png" class="img-responsive"></div>
+            </div><!--- end row --->
+            <!---End top logo bar--->
+            
+            <div class="row"><!---Start Main Content row--->
+            	<div class="col-xs-12 col-sm-12 col-md-12"><!---content col--->
+            	
+            	<!---This would normally be inclued in a template--->
+            	
+					<cfset toplvltitle = "Subscriptions">  
+					<cfinclude template="/includespsp/dashboardadmin_bc.cfm">
+
+					<cfparam name="url.tabitem" default="a">
+
+					<cfoutput>
+
+					<cfset countrylist = application.accountinfo.getCountries()>
+					<cfset statelist = application.accountinfo.getstates()>
+
+
+					<div class="row"><!---start content b row--->
+						<div class="col-xs-12 col-sm-12 col-md-12 dashbrdinrpd">
+							<div class="row">
+								<div class="col-xs-12 col-sm-12 col-md-12">
+										<!-- Nav tabs -->
+									<ul class="nav nav-tabs" role="tablist">
+										<li <cfif trim(url.tabitem) eq 'a'>class="active"</cfif>><a href="##a" role="tab" data-toggle="tab">New Subscription</a></li>
+									</ul>
+								</div><!--- end col --->
+							</div><!--- end row --->
+
+							<div class="row"><!--- Row C--->
+								<div class="col-xs-12 col-sm-12 col-md-12">
+									 <!-- Tab panes -->
+									<div class="tab-content">
+										<div class="tab-pane fade <cfif trim(url.tabitem) eq 'a'>in active</cfif>" id="a">
+											<div class="row innertabpdd">
+												<div class="col-xs-12 col-sm-12 col-md-12 innertabpdd">
+													<div class="tab-in-ct">
+														<div class="row"><!---main row--->
+															<div class="col-xs-12 col-sm-12 col-md-12"><!---Main Col--->
+																
+
+															  <form name="frmsubscription" id="frmsubscription" method="post" role="form" action="/admin/dashadmin_subscription_account.cfm" >
+
+																<input type="hidden" name="ccompanyid" value="">
+
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label>First Name:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="1" class="form-control" name="ShippingaddressFirst" id="ShippingaddressFirst" placeholder="First name" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Last Name:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="2" class="form-control" name="ShippingaddressLast" id="ShippingaddressLast" placeholder="Last name" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Company Name:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="3" class="form-control" name="ShippingCompany" id="ShippingCompany" placeholder="Company" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Address:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="4" class="form-control" name="Shippingaddressline1" id="Shippingaddressline1" placeholder="Address" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Address 2:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="5" class="form-control" name="Shippingaddressline2" id="Shippingaddressline2" placeholder="Address 2">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">City:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="6" class="form-control" name="ShippingaddressCity" id="ShippingaddressCity" placeholder="City" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Country:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				 <select tabindex="7" class="form-control" id="ShippingaddressCountry" name="ShippingaddressCountry">
+																					<option value="">Select a country</option>
+																					<cfloop query="countrylist">
+																						<option value="#countrylist.COUNTRYCODE#">#trim(countrylist.COUNTRYNAME)#</option>
+																					</cfloop>
+																				 </select>
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">State:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<select tabindex="8" class="form-control" id="ShippingaddressState" name="ShippingaddressState">
+																						<option value="00">Select a State</option>
+																					<cfloop query="statelist">
+																						<option value="#statelist.StateCode#">#trim(statelist.Statename)#</option>
+																					</cfloop>
+																				 </select>
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Zip:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="9" class="form-control" name="ShippingaddressZip" id="ShippingaddressZip" placeholder="Zip Code" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Email:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="10" class="form-control" name="ShippingaddressEmail" id="ShippingaddressEmail" placeholder="Email Address" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Phone:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="11" class="form-control phonemsk" name="Shippingaddressphone1" id="Shippingaddressphone1" placeholder="Telephone" required="true">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Mobile Phone:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="12" class="form-control phonemsk" name="Shippingaddressphone2" id="Shippingaddressphone2" placeholder="Mobile Phone">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+																<div class="row">
+																	<div class="col-xs-12 col-sm-12 col-md-12">
+																		<div class="form-group">
+																			<div class="col-xs-12 col-sm-2 col-md-2 text-right">
+																			<label class="control-label">Fax:</label>
+																			</div>
+																			<div class="col-xs-12 col-sm-10 col-md-10">
+																				<input type="text" tabindex="13" class="form-control phonemsk" name="ShippingaddressFax" id="ShippingaddressFax" placeholder="Fax">
+																			</div>
+																			<div class="col-xs-12 hidden-sm hidden-md">&nbsp;</div>
+																		</div>
+																	</div><!--- end col --->
+																</div><!--- end row --->
+
+																<div class="row">
+																	<div class="hidden-xs col-sm-3 col-md-3">&nbsp;</div>
+																	<div class="col-xs-12 col-sm-6 col-md-6">
+																	<button id="btn-signup" tabindex="14" type="submit" class="btn btn-sm btn-orange-banner btn-block" onClick="sbmtfr()"><i class="icon-hand-right"></i><i class="fa fa-refresh fa-spin" id="btnSpn"></i> Submit</button>
+																	</div>
+																	<div class="hidden-xs col-sm-3 col-md-3">&nbsp;</div>
+																</div>
+															</form>
+															</div><!---End Main Col--->
+														</div><!---end mainrow--->
+													</div>
+												</div><!--- end col --->
+											</div><!--- end row --->
+										</div>
+
+
+									</div><!---End Tab Content--->
+								</div><!--- end col --->
+							</div><!--- end row  --->
+						</div><!--- end col --->
+					</div><!--- end content row --->
+				
+				</div><!--- end content col --->
+            </div><!---End Main Content row--->
+
+            <!---Start footer--->
+            <div class="row" id="footer">
+            	<div class="col-xs-12 col-sm-12 col-md-12">
+                &copy; #dateformat(now(),'yyyy')# Information Systems, Inc.
+                </div>
+            </div><!--- end row --->
+            <!---End Footer--->
+        </div><!--- end col --->
+         <!---End Main content well--->
+    </div><!--- end row --->
+</div><!---end container fluid--->
+
+
+</cfoutput>
+
+</body>
+</html>
+
+<cfsetting showdebugoutput="no">
